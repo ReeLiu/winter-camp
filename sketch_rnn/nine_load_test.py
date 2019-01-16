@@ -96,7 +96,7 @@ if condition:
     stroke = test_set.random_sample()
     draw_strokes(stroke)
     
-    z = encode(stroke)
+    #z = encode(stroke)
     _ = decode(z, temperature=0.2)
 else:
     [hps_model, eval_hps_model, sample_hps_model] = load_model(model_dir)
