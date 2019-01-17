@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            color: #eee;
+            font-family: Monospace;
+            font-size: 13px;
+            text-align: center;
+
+            background-color:black;
+            margin: 0px;
+            overflow: hidden;
+             /* Opera 15+, Chrome 25+, IE 10+, Firefox 16+, Safari 6.1+, iOS 7+, Android 4.4+ */
+            /* background-image: linear-gradient(to bottom, #f0ada3, #e0b698, #ccbf9a, #bac5a7, #afc8b7, #a7c7ba, #a0c5be, #9bc3c2, #8abfbe, #77bcb9, #63b8b5, #4bb4b0); */
+            /* background-image: linear-gradient(to bottom, #f0ada3, #d8b085, #afb57e, #7db790, #4bb4b0); */
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        #info {
+            position: absolute;
+            top: 0px;
+            width: 100%;
+            padding: 5px;
+        }
+
+        #story_parser {
+            color:#f0ada3;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 10%;
+            width: 100%;
+            padding: 5px;
+        }
+
+        select {
+            background: transparent;
+            background-color:#1abc9c;
+            color:floralwhite;
+            border: none;
+            font-size: 14px;
+            height: 29px;
+            padding: 5px; /* If you add too much padding here, the options won't show in IE */
+            width: 268px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <input type="file" id="files" name="files[]" multiple /> -->
+    <script src="js/lib/three.min.js"></script>
+    <script src="js/lib/OrbitControls.js"></script>
+    <script src="js/lib/WebGL.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/draw.js"></script>
+
+    <div id="story_parser">
+    <select id="s_selector" onchange="select_scene(this.value)">
+        <option value="">Choose a sentense here...</option>
+        <option value="there_are_two_rabbits_under_the_sun"> there are two rabbits under the sun </option>
+        <option value="There_is_a_bicycle on_the_left_side_of_the_tree"> there is a bicycle on the left side of the tree </option>
+    </select>
+    
+    </div>
+</body>
+
+</html>
