@@ -63,7 +63,7 @@ function init() {
     scene.add(camera);
 
     // set background object
-    var map = new THREE.TextureLoader().load('textures/bg1.png', function(tex) {
+    var map = new THREE.TextureLoader().load('textures/bg.png', function(tex) {
         // tex and texture are the same in this example, but that might not always be the case
     } );
 
@@ -140,7 +140,7 @@ function select_scene(val) {
                 var sample_id = (Math.floor(Math.random() * 5) + 1).toString();
                 var ele_path = 'data/images/' + ele.class + "/" + sample_id + '.png';
                 var trace_path = 'data/traces/' + ele.class + "/" + sample_id + '.txt';
-                var doodle = new Doodle(ele_path, trace_path, obj_ctgs[ele.class].dsize, null, ele.class + "_" + sample_id);
+                var doodle = new Doodle(ele_path, trace_path, obj_ctgs[ele.class].dsize, null, ele.class + "_" + ele.name + sample_id);
                 obj_names.push(doodle.name);
 
                 var doodle_pos = new THREE.Vector3(
@@ -211,25 +211,37 @@ function animate() {
 
 function render() {
 
-    // var timer = Date.now() * 0.0001;
-    // camera.position.x = Math.cos(timer / 2) * 800;
-    // camera.position.z = Math.sin(timer / 2) * 800;
+    var timer = Date.now() * 0.0001;
+    // camera.position.x = Math.cos(timer / 2) * 1600;
+    // camera.position.z = Math.sin(timer / 2) * 1600;
 
     camera.lookAt(-1, 0, -1);
 
-    // obj_names.forEach(element => {
-    //     obj = scene.getObjectByName(element);
-    //     // random running vector
-    //     if (obj.isMesh === true) {
-    //         var obj_class = obj.name.split("_")[0];
-    //         if (obj_claas == "bike") {
-    //             var ran_vec -new type(arguments);
-    //             obj.position.add();
-    //         }
-    //         // running by cate
-    //         // obj.position.y += timer * 2.5;
-    //     }
-    // });
+    obj_names.forEach(element => {
+        obj = scene.getObjectByName(element);
+
+        if (obj.isMesh === true) {
+            if (obj.name.split('_')[0] == 'bike') {
+                obj.position.y = (Math.sin(timer * 50) * 0.2 + 1) * obj.geometry.parameters.height / 2;
+                obj.position.x = Math.cos(timer *5) * 350;
+                obj.position.z = Math.sin(timer *5) * 350;
+            }
+            if (obj.name.split('_')[0] == 'tree') {
+                obj.rotation.y = timer * 2.5;
+            }
+
+            if (obj.name.split('_')[0] == 'sun') {
+                obj.position.x = Math.cos(timer * 5 / 2) * 1350;
+                obj.position.z = Math.sin(timer * 5 / 2) * 1350;            
+            }
+
+            if (obj.name.split('_')[0] == 'rabbit') {
+                obj.position.y = (Math.sin(timer *50 )*0.2 + 1) * obj.geometry.parameters.height / 2;
+                obj.position.x += Math.cos(timer * 7)*Math.cos(timer * 5 ) * 0.3;
+                obj.position.z += Math.sin(timer * 17)*Math.sin(timer * 7 ) * 0.3;
+            }
+        }
+    });
 
     renderer.render(scene, camera);
 
