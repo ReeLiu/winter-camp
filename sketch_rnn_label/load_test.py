@@ -85,21 +85,30 @@ def encode(stroke, model, sess, label=0):
     return batch_z[0]
 
 
+def save_txt(stk, filename):
+    np.savetxt(filename, stk, fmt='%1.4f')
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_dir", type=str, default='/home/ehaschia/Code/winter-camp')
     parser.add_argument('--models_root_dir', type=str, default='/home/ehaschia/Code/winter-camp/sketch_rnn_label')
     parser.add_argument('--model_dir', type=str, default='/home/ehaschia/Code/winter-camp/sketch_rnn_label/flower_sun')
     parser.add_argument('--condition', action='store_true')
+    parser.add_argument('--number', type=int, default=10)
+    parser.add_argument('--unpair', action='store_true', help='generate unpair input')
+    parser.add_argument('--save_dir', default='./output/')
     args = parser.parse_args()
     print(args)
     condition = args.condition
     data_dir = args.data_dir
     models_root_dir = args.models_root_dir
     model_dir = args.model_dir
-
+    number_sample = args.number
+    save_dir = args.save_dir
     if condition:
-        [train_set, valid_set, test_set, hps_model, eval_hps_model, sample_hps_model] = load_env(data_dir, model_dir)
+        [train_set, valid_set, test_set, hps_model, eval_hps_model, sample_hps_model] = load_env(data_dir,
+                                                                                                 model_dir)
 
         reset_graph()
         model = Model(hps_model)
@@ -109,12 +118,24 @@ def main():
         sess = tf.InteractiveSession()
         sess.run(tf.global_variables_initializer())
         load_checkpoint(sess, model_dir)
-        stroke = test_set.random_sample()
-        draw_strokes(stroke[0])
-        stroke[0] = test_set.pad_batch([stroke[0]], hps_model.max_seq_len)
+        for i in range(number_sample):
+            stroke = test_set.random_sample()
+            draw_strokes(stroke[0], svg_filename=save_dir + str(i) + 'input.svg')
+            stroke[0] = test_set.pad_batch([stroke[0]], hps_model.max_seq_len)
 
-        z = encode(stroke[0], eval_model, sess, label=stroke[1])
-        _ = decode(sess, sample_model, eval_model, z, temperature=0.2, name='./svg/out.svg')
+            if args.unpair:
+                label_num = len(hps_model.data_set)
+                if label_num > 1:
+                    new_label = np.random.randint(0, label_num)
+                    while new_label == stroke[1]:
+                        new_label = np.random.randint(0, label_num)
+                    stroke[1] = new_label
+                    with open(save_dir + str(i) + '_label.txt', 'w') as f:
+                        f.write(hps_model.data_set[new_label])
+            z = encode(stroke[0], eval_model, sess, label=stroke[1])
+
+            stk = decode(sess, sample_model, eval_model, z, temperature=0.2, name=save_dir + str(i) + '.svg')
+            save_txt(stk, save_dir + str(i) + '.txt')
     else:
         [hps_model, eval_hps_model, sample_hps_model] = load_model(model_dir)
         reset_graph()
@@ -125,11 +146,10 @@ def main():
         sess = tf.InteractiveSession()
         sess.run(tf.global_variables_initializer())
         load_checkpoint(sess, model_dir)
-
-        z_0 = np.random.randn(eval_hps_model.z_size)
-        _ = decode(sess, sample_model, eval_model, z_0, name='./svg/sample.svg')
-
+        for i in range(number_sample):
+            z_0 = np.random.randn(eval_hps_model.z_size)
+            stk = decode(sess, sample_model, eval_model, z_0, name=save_dir + str(i) + '.svg')
+            save_txt(stk, save_dir + str(i) + '.txt')
 
 if __name__ == '__main__':
-
     main()
