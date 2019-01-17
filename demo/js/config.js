@@ -131,7 +131,7 @@ class Doodle {
 
         // var material_d = new THREE.MeshPhongMaterial({ map: map_d, side: THREE.DoubleSide, transparent: true });
         var doodle_plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(this.doodle_size.x * GRID_SIZE, this.doodle_size.y * GRID_SIZE, 4, 4), material_d);
-        doodle_plane.rotation.y = Math.random() * Math.PI;
+        doodle_plane.rotation.y = Math.PI / 4;
         doodle_plane.castShadow = false;
         doodle_plane.receiveShadow = false;
         doodle_plane.name = this.name;

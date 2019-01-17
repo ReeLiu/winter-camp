@@ -6,6 +6,7 @@ if (WEBGL.isWebGLAvailable() === false) {
 var camera, scene, renderer, controls;
 var draw_speed = 0.01;
 var cur_origin = new THREE.Vector3(0, 0, 0);        // scene origin to world origin
+var scene_center;
 
 const file_loader = new THREE.FileLoader();
 var data_tmp;       // temporarily store file.
@@ -40,7 +41,7 @@ function init() {
     document.body.appendChild(renderer.domElement);
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 20000);
-    camera.position.set(SCENE_SIZE_GRID.z * GRID_SIZE * 0.3, 50, SCENE_SIZE_GRID.z * GRID_SIZE * 0.3);
+    camera.position.set(SCENE_SIZE_GRID.z * GRID_SIZE * 0.5, 100, SCENE_SIZE_GRID.z * GRID_SIZE * 0.5);
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
@@ -105,13 +106,13 @@ function init() {
     // plane_z.position.set(0 + box_size.x / 4, box_size.y / 2, -box_size.z / 4);
     // scene.add(plane_z);
 
-    cur_origin.add(-box_size.x / 4, -box_size.y / 4, -box_size.z / 4);
+    // cur_origin.add(-box_size.x / 4, -box_size.y / 4, -box_size.z / 4);
 
-    // test drawing
-    var doodle = new Doodle();
-    // draw_doodle_trace(doodle, 'data/flower.txt');
-    draw_doodle(scene, cur_origin, doodle);
-    scene_doodles.push(doodle);
+    // // test drawing
+    // var doodle = new Doodle();
+    // // draw_doodle_trace(doodle, 'data/flower.txt');
+    // draw_doodle(scene, cur_origin, doodle);
+    // scene_doodles.push(doodle);
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -121,7 +122,7 @@ function select_scene(val) {
     scene_id = val;
 
     // remove old doodles
-    console.log(obj_names);
+    console.log(obj_names);  
     while (obj_names.length > 0) {
         var obj_name = obj_names.pop();
         var selectedObject = scene.getObjectByName(obj_name);
@@ -137,15 +138,14 @@ function select_scene(val) {
                 console.log(ele);
                 // find img_path by obj
                 var sample_id = (Math.floor(Math.random() * 5) + 1).toString();
-                var ele_path = 'data/trans/' + ele.class + "/" + sample_id + '.png';
+                var ele_path = 'data/images/' + ele.class + "/" + sample_id + '.png';
                 var trace_path = 'data/traces/' + ele.class + "/" + sample_id + '.txt';
-                var doodle = new Doodle(ele_path, trace_path, obj_ctgs[ele.class].dsize, null, "doodle_" + sample_id);
-                console.log(doodle.name);
+                var doodle = new Doodle(ele_path, trace_path, obj_ctgs[ele.class].dsize, null, ele.class + "_" + sample_id);
                 obj_names.push(doodle.name);
 
                 var doodle_pos = new THREE.Vector3(
                     (Math.random() * ((ele.x[1] - ele.x[0]) + ele.x[0] - 0.5)/2) * SCENE_SIZE_GRID.x,
-                    (ele.y - 0.2- (Math.random() * 0.5)) * ele.y * SCENE_SIZE_GRID.y,
+                    (ele.y - (Math.random() * 0.5)) * ele.y * SCENE_SIZE_GRID.y,
                     (Math.random() * ((ele.z[1] - ele.z[0]) + ele.z[0] - 0.5)/2) * SCENE_SIZE_GRID.z
                 );
                 
@@ -211,17 +211,23 @@ function animate() {
 
 function render() {
 
-    var timer = Date.now() * 0.0001;
-    camera.position.x = Math.cos(timer / 2) * 800;
-    camera.position.z = Math.sin(timer / 2) * 800;
+    // var timer = Date.now() * 0.0001;
+    // camera.position.x = Math.cos(timer / 2) * 800;
+    // camera.position.z = Math.sin(timer / 2) * 800;
 
-    camera.lookAt(scene.position);
+    camera.lookAt(-1, 0, -1);
 
     // obj_names.forEach(element => {
     //     obj = scene.getObjectByName(element);
-
+    //     // random running vector
     //     if (obj.isMesh === true) {
-    //         obj.rotation.y = timer * 2.5;
+    //         var obj_class = obj.name.split("_")[0];
+    //         if (obj_claas == "bike") {
+    //             var ran_vec -new type(arguments);
+    //             obj.position.add();
+    //         }
+    //         // running by cate
+    //         // obj.position.y += timer * 2.5;
     //     }
     // });
 
